@@ -2,7 +2,7 @@
 
 ```
 sam build --use-container
-sam build --use-container GetRecommendationsByIdFunction
+sam build --use-container -m src/function1/dependencies/requirements.txt GetRecommendationsByIdFunction
 
 sam local invoke GetRecommendationsByIdFunction
 

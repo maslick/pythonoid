@@ -7,12 +7,36 @@ Globals:
     Timeout: 5
 
 Resources:
+  Database:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: ContactId
+          KeyType: HASH
+      TableName: demo.ContactArticleRecommendation
+      AttributeDefinitions:
+        - AttributeName: ContactId
+          AttributeType: S
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      Tags:
+        - Key: "System"
+          Value: "Test"
+        - Key: "Application"
+          Value: "e-commerce"
+
+
   GetRecommendationsByIdFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/function1
       Handler: getArticlesById.lambda_handler
       Runtime: python3.7
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonDynamoDBFullAccess
       Events:
         HelloWorld:
           Type: Api

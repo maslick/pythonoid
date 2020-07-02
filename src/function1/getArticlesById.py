@@ -1,7 +1,7 @@
 import json
 import boto3
 
-client = boto3.resource('dynamodb', region_name="eu-west-1")
+client = boto3.resource('dynamodb')
 table = client.Table('demo.ContactArticleRecommendation')
 
 

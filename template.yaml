@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Sample SAM Template for testing API Gateway, Lambda, DynamoDB integration
+
+Globals:
+  Function:
+    Timeout: 5
+
+Resources:
+  GetRecommendationsByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello_world/
+      Handler: getArticlesById.lambda_handler
+      Runtime: python3.7
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /getArticlesById
+            Method: get
+
+Outputs:
+  RecommendationsApi:
+    Description: "API Gateway endpoint URL for Prod stage for GetRecommendationsByIdFunction function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/getArticlesById/"
+  GetRecommendationsByIdFunction:
+    Description: "GetRecommendationsByIdFunction Lambda Function ARN"
+    Value: !GetAtt GetRecommendationsByIdFunction.Arn
+  GetRecommendationsByIdFunctionIamRole:
+    Description: "Implicit IAM Role created for GetRecommendationsByIdFunction function"
+    Value: !GetAtt GetRecommendationsByIdFunctionRole.Arn

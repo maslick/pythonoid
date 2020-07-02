@@ -10,7 +10,7 @@ Resources:
   GetRecommendationsByIdFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: hello_world/
+      CodeUri: src/function1
       Handler: getArticlesById.lambda_handler
       Runtime: python3.7
       Events:

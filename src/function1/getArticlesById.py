@@ -1,8 +1,9 @@
 import json
 import boto3
+import os
 
 client = boto3.resource('dynamodb')
-table = client.Table('demo.ContactArticleRecommendation')
+table = client.Table('demo.ContactArticleRecommendation.{}'.format(os.environ["STAGE"]))
 
 
 def lambda_handler(event, context):

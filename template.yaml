@@ -3,8 +3,16 @@ Transform: AWS::Serverless-2016-10-31
 Description: Sample SAM Template for testing API Gateway, Lambda, DynamoDB integration
 
 Globals:
+  Api:
+    OpenApiVersion: 3.0.1
   Function:
     Timeout: 5
+
+
+Parameters:
+    Environment:
+      Type: String
+      Default: dev
 
 Resources:
   Database:
@@ -13,7 +21,7 @@ Resources:
       KeySchema:
         - AttributeName: ContactId
           KeyType: HASH
-      TableName: demo.ContactArticleRecommendation
+      TableName: !Sub demo.ContactArticleRecommendation.${Environment}
       AttributeDefinitions:
         - AttributeName: ContactId
           AttributeType: S
@@ -27,7 +35,6 @@ Resources:
         - Key: "Application"
           Value: "e-commerce"
 
-
   GetRecommendationsByIdFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -36,18 +43,27 @@ Resources:
       Runtime: python3.7
       Policies:
         - AWSLambdaVPCAccessExecutionRole
-        - AmazonDynamoDBFullAccess
+        - AmazonDynamoDBReadOnlyAccess
       Events:
         HelloWorld:
           Type: Api
           Properties:
             Path: /getArticlesById
             Method: get
+            RestApiId: !Ref API
+      Environment:
+        Variables:
+          STAGE: !Sub ${Environment}
+
+  API:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Sub ${Environment}
 
 Outputs:
   RecommendationsApi:
     Description: "API Gateway endpoint URL for Prod stage for GetRecommendationsByIdFunction function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/getArticlesById/"
+    Value: !Sub "https://${API}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/getArticlesById"
   GetRecommendationsByIdFunction:
     Description: "GetRecommendationsByIdFunction Lambda Function ARN"
     Value: !GetAtt GetRecommendationsByIdFunction.Arn

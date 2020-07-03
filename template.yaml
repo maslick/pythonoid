@@ -27,7 +27,7 @@ Resources:
           AttributeType: S
       BillingMode: PROVISIONED
       ProvisionedThroughput:
-        ReadCapacityUnits: 1
+        ReadCapacityUnits: 5
         WriteCapacityUnits: 1
       Tags:
         - Key: "System"
@@ -41,6 +41,7 @@ Resources:
       CodeUri: src/function1
       Handler: getArticlesById.lambda_handler
       Runtime: python3.7
+      Tracing: Active
       Policies:
         - AWSLambdaVPCAccessExecutionRole
         - AmazonDynamoDBReadOnlyAccess

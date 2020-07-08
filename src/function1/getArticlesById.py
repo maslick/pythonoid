@@ -3,6 +3,7 @@ import boto3
 import os
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.core import patch
+from datetime import datetime
 
 
 patch(['boto3', 'requests'])
@@ -15,7 +16,8 @@ def lambda_handler(event, context):
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "articles": get_articles(userId)
+            "articles": get_articles(userId),
+            "timestamp": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         }),
     }
 

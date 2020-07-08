@@ -5,13 +5,6 @@ Description: Sample SAM Template for testing API Gateway, Lambda, DynamoDB integ
 Globals:
   Api:
     OpenApiVersion: 3.0.1
-    CacheClusterEnabled: true
-    CacheClusterSize: '0.5'
-    MethodSettings:
-      - ResourcePath: /getArticlesById
-        HttpMethod: "GET"
-        CachingEnabled: true
-        CacheTtlInSeconds: 300
   Function:
     Timeout: 5
 

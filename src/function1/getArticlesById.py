@@ -17,7 +17,7 @@ def lambda_handler(event, context):
         "statusCode": 200,
         "body": json.dumps({
             "articles": get_articles(userId),
-            "timestamp1": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            "timestamp": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         }),
     }
 

@@ -27,7 +27,7 @@ Resources:
           AttributeType: S
       BillingMode: PROVISIONED
       ProvisionedThroughput:
-        ReadCapacityUnits: 5
+        ReadCapacityUnits: 15
         WriteCapacityUnits: 1
       Tags:
         - Key: "System"
@@ -63,7 +63,7 @@ Resources:
         HelloWorld:
           Type: Api
           Properties:
-            Path: /getArticlesById
+            Path: /getArticlesByIdDynamo
             Method: get
             RestApiId: !Ref API
       Environment:

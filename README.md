@@ -2,11 +2,13 @@
 
 ```
 # build
-sam build --use-container -m src/function1/dependencies/requirements.txt GetRecommendationsByIdFunctionDynamo
-sam build --use-container -m src/function2/dependencies/requirements.txt GetRecommendationsByIdFunctionS3
+sam build --use-container GetRecommendationsByIdFunctionDynamo
+sam build --use-container GetRecommendationsByIdFunctionS3
+sam build --use-container
 
 # test locally
 sam local start-api
+sam local start-api --parameter-overrides 'Environment=qa'
 
 # deploy
 sam deploy --guided
@@ -32,8 +34,13 @@ aws s3 cp dump/s3/9752299010000008.json s3://demo.contact.article.recommendation
 API_ID=mh4mnq3h3i
 REGION=eu-central-1
 ENV=qa
-echo "GET https://$API_ID.execute-api.$REGION.amazonaws.com/$ENV/getArticlesById?id=9752299010000007" | vegeta attack -header="Content-Type: application/json" -rate=50 -duration=2s | tee results.bin | vegeta report
-cat results.bin | vegeta report -type="hist[0,1ms,5ms,10ms,20ms,50ms,75ms,100ms,500ms,1000ms]"
+
+curl https://$API_ID.execute-api.$REGION.amazonaws.com/$ENV/getArticlesByIdDynamo?id=9752299010000007 | jq
+curl https://$API_ID.execute-api.$REGION.amazonaws.com/$ENV/getArticlesByIdS3?id=9752299010000007 | jq
+
+echo "GET https://$API_ID.execute-api.$REGION.amazonaws.com/$ENV/getArticlesByIdDynamo?id=9752299010000007" | vegeta attack -header="Content-Type: application/json" -rate=20 -duration=2s | tee results.bin | vegeta report
+echo "GET https://$API_ID.execute-api.$REGION.amazonaws.com/$ENV/getArticlesByIdS3?id=9752299010000007" | vegeta attack -header="Content-Type: application/json" -rate=20 -duration=2s | tee results.bin | vegeta report
+cat results.bin | vegeta report -type="hist[0,1ms,5ms,10ms,20ms,50ms,75ms,100ms,150ms,300ms,500ms,1000ms]"
 cat results.bin | vegeta plot > plot.html
 open plot.html
 ```

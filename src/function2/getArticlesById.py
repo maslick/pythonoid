@@ -24,5 +24,5 @@ def lambda_handler(event, context):
 
 @xray_recorder.capture('s3')
 def get_articles(id):
-    body = bucket.Object('{}.json'.format(id)).get()['Body'].read()
+    body = bucket.Object('{}.json'.format(id)).get()['Body'].read().decode('utf-8')
     return json.loads(body)['Articles']

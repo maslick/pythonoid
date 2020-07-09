@@ -45,7 +45,9 @@ Resources:
       Tracing: Active
       Policies:
         - AWSLambdaVPCAccessExecutionRole
-        - AmazonDynamoDBReadOnlyAccess
+        - DynamoDBReadPolicy:
+            TableName:
+              !Ref Database
       Events:
         HelloWorld:
           Type: Api

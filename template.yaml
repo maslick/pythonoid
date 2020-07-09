@@ -35,7 +35,18 @@ Resources:
         - Key: "Application"
           Value: "e-commerce"
 
-  GetRecommendationsByIdFunction:
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName: !Sub demo.contact.article.recommendation.${Environment}
+      Tags:
+        - Key: "System"
+          Value: "Test"
+        - Key: "Application"
+          Value: "e-commerce"
+
+  GetRecommendationsByIdFunctionDynamo:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/function1
@@ -59,6 +70,30 @@ Resources:
         Variables:
           STAGE: !Sub ${Environment}
 
+  GetRecommendationsByIdFunctionS3:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/function2
+      Handler: getArticlesById.lambda_handler
+      Runtime: python3.7
+      MemorySize: 128
+      Tracing: Active
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+        - S3ReadPolicy:
+            BucketName:
+              !Ref MyBucket
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /getArticlesByIdS3
+            Method: get
+            RestApiId: !Ref API
+      Environment:
+        Variables:
+          STAGE: !Sub ${Environment}
+
   API:
     Type: AWS::Serverless::Api
     Properties:
@@ -66,11 +101,5 @@ Resources:
 
 Outputs:
   RecommendationsApi:
-    Description: "API Gateway endpoint URL for Prod stage for GetRecommendationsByIdFunction function"
-    Value: !Sub "https://${API}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/getArticlesById"
-  GetRecommendationsByIdFunction:
-    Description: "GetRecommendationsByIdFunction Lambda Function ARN"
-    Value: !GetAtt GetRecommendationsByIdFunction.Arn
-  GetRecommendationsByIdFunctionIamRole:
-    Description: "Implicit IAM Role created for GetRecommendationsByIdFunction function"
-    Value: !GetAtt GetRecommendationsByIdFunctionRole.Arn
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${API}.execute-api.${AWS::Region}.amazonaws.com/${Environment}"

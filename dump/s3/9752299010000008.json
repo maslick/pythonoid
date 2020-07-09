@@ -1,0 +1,20 @@
+{
+  "Articles": [
+    {
+      "ArticleId": "111111111",
+      "Rank": "1",
+      "UoM": "ST"
+    },
+    {
+      "ArticleId": "222222222",
+      "Rank": "2",
+      "UoM": "ST"
+    },
+    {
+      "ArticleId": "100956486",
+      "Rank": "3",
+      "UoM": "ST"
+    }
+  ],
+  "ContactId": "9752299010000008"
+}

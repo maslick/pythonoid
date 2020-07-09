@@ -1,30 +1,39 @@
 # test-lambda
 
 ```
-sam build --use-container
-sam build --use-container -m src/function1/dependencies/requirements.txt GetRecommendationsByIdFunction
+# build
+sam build --use-container -m src/function1/dependencies/requirements.txt GetRecommendationsByIdFunctionDynamo
+sam build --use-container -m src/function2/dependencies/requirements.txt GetRecommendationsByIdFunctionS3
 
-sam local invoke GetRecommendationsByIdFunction
-
+# test locally
 sam local start-api
-curl "http://127.0.0.1:3000/getArticlesById?id=9752299010000007" | jq
-curl "http://127.0.0.1:3000/getArticlesById?id=9752299010000006" | jq
 
-sam build --use-container -m src/function1/dependencies/requirements.txt
-sam deploy --stack-name test-sam-app-test --parameter-overrides 'Environment=test'
-sam deploy --stack-name test-sam-app-dev --parameter-overrides 'Environment=dev'
-sam deploy --stack-name test-sam-app-qa --parameter-overrides 'Environment=qa'
+# deploy
 sam deploy --guided
+sam deploy --stack-name test-sam-app-test --parameter-overrides 'Environment=test' --no-confirm-changeset
+sam deploy --stack-name test-sam-app-dev --parameter-overrides 'Environment=dev' --no-confirm-changeset
+sam deploy --stack-name test-sam-app-qa --parameter-overrides 'Environment=qa' --no-confirm-changeset
 
-aws dynamodb put-item --table-name demo.ContactArticleRecommendation.dev --item file://sample.json
-aws dynamodb put-item --table-name demo.ContactArticleRecommendation.test --item file://sample.json
-aws dynamodb put-item --table-name demo.ContactArticleRecommendation.qa --item file://sample.json
+# fill dynamodb with sample data
+aws dynamodb put-item --table-name demo.ContactArticleRecommendation.dev --item file://dump/ddb/sample1.json
+aws dynamodb put-item --table-name demo.ContactArticleRecommendation.dev --item file://dump/ddb/sample2.json
 
-echo "GET https://mh4mnq3h3i.execute-api.eu-central-1.amazonaws.com/qa/getArticlesById?id=9752299010000007" | vegeta attack -header="Content-Type: application/json" -rate=50 -duration=2s | tee results.bin | vegeta report
+aws dynamodb put-item --table-name demo.ContactArticleRecommendation.test --item file://dump/ddb/sample1.json
+aws dynamodb put-item --table-name demo.ContactArticleRecommendation.test --item file://dump/ddb/sample2.json
+
+aws dynamodb put-item --table-name demo.ContactArticleRecommendation.qa --item file://dump/ddb/sample1.json
+aws dynamodb put-item --table-name demo.ContactArticleRecommendation.qa --item file://dump/ddb/sample2.json
+
+# put objects to s3
+aws s3 cp dump/s3/9752299010000007.json s3://demo.contact.article.recommendation.$ENV
+aws s3 cp dump/s3/9752299010000008.json s3://demo.contact.article.recommendation.$ENV
+
+# test
+API_ID=mh4mnq3h3i
+REGION=eu-central-1
+ENV=qa
+echo "GET https://$API_ID.execute-api.$REGION.amazonaws.com/$ENV/getArticlesById?id=9752299010000007" | vegeta attack -header="Content-Type: application/json" -rate=50 -duration=2s | tee results.bin | vegeta report
 cat results.bin | vegeta report -type="hist[0,1ms,5ms,10ms,20ms,50ms,75ms,100ms,500ms,1000ms]"
 cat results.bin | vegeta plot > plot.html
 open plot.html
 ```
-
-
-https://github.com/aws/aws-xray-sdk-python

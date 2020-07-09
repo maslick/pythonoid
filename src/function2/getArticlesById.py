@@ -7,8 +7,8 @@ from datetime import datetime
 
 
 patch(['boto3', 'requests'])
-client = boto3.resource('dynamodb')
-table = client.Table('demo.ContactArticleRecommendation.{}'.format(os.environ["STAGE"]))
+client = boto3.resource('s3')
+bucket = client.Bucket('demo.contact.article.recommendation.{}'.format(os.environ["STAGE"]))
 
 
 def lambda_handler(event, context):
@@ -17,14 +17,12 @@ def lambda_handler(event, context):
         "statusCode": 200,
         "body": json.dumps({
             "articles": get_articles(userId),
-            "timestamp1": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            "timestamp": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         }),
     }
 
 
-@xray_recorder.capture('ddb')
+@xray_recorder.capture('s3')
 def get_articles(id):
-    resp = table.get_item(Key={"ContactId": id})
-    if 'Item' in resp:
-        return resp['Item']['Articles']
-    return []
+    body = bucket.Object('{}.json'.format(id)).get()['Body'].read()
+    return json.loads(body)['Articles']

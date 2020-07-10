@@ -1,6 +1,7 @@
 import json
 import boto3
 import os
+from botocore.exceptions import ClientError
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.core import patch
 from datetime import datetime
@@ -24,5 +25,11 @@ def lambda_handler(event, context):
 
 @xray_recorder.capture('s3')
 def get_articles(id):
-    body = bucket.Object('{}.json'.format(id)).get()['Body'].read().decode('utf-8')
+    try:
+        body = bucket.Object('{}.json'.format(id)).get()['Body'].read().decode('utf-8')
+    except ClientError as e:
+        if e.response['Error']['Code'] == "NoSuchKey":
+            return []
+        else:
+            raise
     return json.loads(body)['Articles']

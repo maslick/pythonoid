@@ -1,0 +1,89 @@
+---
+openapi: "3.0.1"
+
+
+info:
+  title: "pythonoid"
+  description: "AWS API Gateway, Lambda, DynamoDB, S3, SAM showcase"
+  version: "v1.0"
+
+servers:
+  - url:
+      Fn::Sub: "https://hello.world/${Environment}"
+    description:
+      Fn::Sub: "${Environment} environment URL"
+
+x-amazon-apigateway-policy:
+  Version: '2012-10-17'
+  Statement:
+    - Effect: Allow
+      Principal: "*"
+      Action:
+        - "execute-api:Invoke"
+      Resource: "execute-api:/*"
+
+paths:
+  /getArticlesByIdDynamo:
+    get:
+      summary: Fetch articles from DynamoDB
+      description: Returns a list of article recommendations for a specific user
+      responses:
+        200:
+          description: "Successfully fetched articles"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Articles"
+        500:
+          description: "Internal Server Error"
+          content: {}
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetRecommendationsByIdFunctionDynamo.Arn}/invocations"
+        type: aws_proxy
+        httpMethod: POST
+        passthroughBehavior: "when_no_match"
+
+  /getArticlesByIdS3:
+    get:
+      summary: Fetch articles from S3
+      description: Returns a list of article recommendations for a specific user
+      responses:
+        200:
+          description: "Successfully fetched articles"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Articles"
+        500:
+          description: "Internal Server Error"
+          content: {}
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetRecommendationsByIdFunctionS3.Arn}/invocations"
+        type: aws_proxy
+        httpMethod: POST
+        passthroughBehavior: "when_no_match"
+
+components:
+  schemas:
+    Contact:
+      properties:
+        ContactId:
+          type: "integer"
+          format: "int64"
+        Articles:
+          $ref: "#/components/schemas/Articles"
+    Articles:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Article"
+    Article:
+      type: "object"
+      properties:
+        ArticleId:
+          type: "string"
+        UoM:
+          type: "string"
+        Rank:
+          type: "integer"

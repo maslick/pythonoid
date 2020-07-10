@@ -52,7 +52,7 @@ Resources:
       CodeUri: src/function1
       Handler: getArticlesById.lambda_handler
       Runtime: python3.7
-      MemorySize: 128
+      MemorySize: 3008
       Tracing: Active
       Policies:
         - AWSLambdaVPCAccessExecutionRole
@@ -76,7 +76,7 @@ Resources:
       CodeUri: src/function2
       Handler: getArticlesById.lambda_handler
       Runtime: python3.7
-      MemorySize: 128
+      MemorySize: 3008
       Tracing: Active
       Policies:
         - AWSLambdaVPCAccessExecutionRole

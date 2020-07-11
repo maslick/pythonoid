@@ -16,10 +16,7 @@ def lambda_handler(event, context):
     userId = event['queryStringParameters']['id']
     return {
         "statusCode": 200,
-        "body": json.dumps({
-            "articles": get_articles(userId),
-            "timestamp": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        }),
+        "body": json.dumps(get_articles(userId)),
     }
 
 

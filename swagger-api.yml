@@ -67,13 +67,6 @@ paths:
 
 components:
   schemas:
-    Contact:
-      properties:
-        ContactId:
-          type: "integer"
-          format: "int64"
-        Articles:
-          $ref: "#/components/schemas/Articles"
     Articles:
           type: "array"
           items:
@@ -86,4 +79,4 @@ components:
         UoM:
           type: "string"
         Rank:
-          type: "integer"
+          type: "string"

@@ -16,6 +16,9 @@ def lambda_handler(event, context):
     return {
         "statusCode": 200,
         "body": json.dumps(get_articles(userId)),
+        "headers": {
+            "timestamp": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        }
     }
 
 

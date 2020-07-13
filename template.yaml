@@ -15,7 +15,7 @@ Parameters:
       Default: dev
 
 Resources:
-  Database:
+  MyDatabase:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub demo.ContactArticleRecommendation.${Environment}
@@ -58,7 +58,7 @@ Resources:
         - AWSLambdaVPCAccessExecutionRole
         - DynamoDBReadPolicy:
             TableName:
-              !Ref Database
+              !Ref MyDatabase
       Events:
         HelloWorld:
           Type: Api

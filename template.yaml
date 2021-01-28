@@ -100,6 +100,8 @@ Resources:
       Name: !Sub ${AWS::StackName}
       StageName: !Sub ${Environment}
       TracingEnabled: true
+      CacheClusterEnabled: true
+      CacheClusterSize: "0.5"
       DefinitionBody:
         'Fn::Transform':
           Name: 'AWS::Include'
@@ -111,6 +113,14 @@ Resources:
           LoggingLevel: INFO
           MetricsEnabled: true
           DataTraceEnabled: true
+          CacheTtlInSeconds: 120
+          CachingEnabled: true
+        - ResourcePath: "/getArticlesByIdDynamo"
+          HttpMethod: GET
+          CachingEnabled: false
+        - ResourcePath: "/getArticlesByIdS3"
+          HttpMethod: GET
+          CachingEnabled: true
       AccessLogSetting:
         DestinationArn: !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:${ApiAccessLogGroup}"
         Format: '$context.identity.sourceIp $context.authorizer.claims.sub [$context.requestTime] "$context.httpMethod $context.resourcePath $context.protocol" $context.status $context.requestId $context.awsEndpointRequestId $context.xrayTraceId $context.responseLatency $context.integrationLatency "$context.error.message"'

@@ -37,12 +37,19 @@ paths:
         500:
           description: "Internal Server Error"
           content: {}
+      parameters:
+        - name: "id"
+          in: "query"
+          required: "true"
+          type: "string"
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetRecommendationsByIdFunctionDynamo.Arn}/invocations"
         type: aws_proxy
         httpMethod: POST
         passthroughBehavior: "when_no_match"
+        cacheKeyParameters:
+          - method.request.querystring.id
 
   /getArticlesByIdS3:
     get:

@@ -46,6 +46,17 @@ Resources:
         - Key: "Application"
           Value: "e-commerce"
 
+  DepsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Dependencies for ${AWS::StackId}-${Environment}
+      ContentUri: deps
+      CompatibleRuntimes:
+        - python3.7
+      RetentionPolicy: Retain
+    Metadata:
+      BuildMethod: python3.7
+
   GetRecommendationsByIdFunctionDynamo:
     Type: AWS::Serverless::Function
     Properties:
@@ -59,6 +70,8 @@ Resources:
         - DynamoDBReadPolicy:
             TableName:
               !Ref MyDatabase
+      Layers:
+        - !Ref DepsLayer
       Events:
         HelloWorld:
           Type: Api
@@ -83,6 +96,8 @@ Resources:
         - S3ReadPolicy:
             BucketName:
               !Ref MyBucket
+      Layers:
+        - !Ref DepsLayer
       Events:
         HelloWorld:
           Type: Api

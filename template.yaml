@@ -49,20 +49,20 @@ Resources:
   DepsLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      Description: Dependencies for ${AWS::StackId}-${Environment}
+      Description: !Sub Dependencies for ${AWS::StackId}-${Environment}
       ContentUri: deps
       CompatibleRuntimes:
-        - python3.7
+        - python3.9
       RetentionPolicy: Retain
     Metadata:
-      BuildMethod: python3.7
+      BuildMethod: python3.9
 
   GetRecommendationsByIdFunctionDynamo:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/function1
       Handler: getArticlesById.lambda_handler
-      Runtime: python3.7
+      Runtime: python3.9
       MemorySize: 3008
       Tracing: Active
       Policies:
@@ -88,7 +88,7 @@ Resources:
     Properties:
       CodeUri: src/function2
       Handler: getArticlesById.lambda_handler
-      Runtime: python3.7
+      Runtime: python3.9
       MemorySize: 3008
       Tracing: Active
       Policies:

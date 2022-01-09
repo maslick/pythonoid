@@ -10,7 +10,7 @@ logger () {
   echo -e ${RED}$(date -u)${NC} "\t" "$1"
 }
 
-function create_s3_bucket() {
+function create_sam_bucket() {
   logger "################################################################################################"
   logger "Create S3 bucket for Lambda code and dependencies"
   logger "################################################################################################"
@@ -37,7 +37,7 @@ function deploy_app() {
   logger "Deploy app to $ENVIRONMENT environment"
   logger "################################################################################################"
   sam deploy --stack-name $STACK_NAME \
-      --parameter-overrides "Environment=${ENVIRONMENT}" \
+      --parameter-overrides "Environment=${ENVIRONMENT} EndpointType=PRIVATE" \
       --s3-bucket "${STACK_NAME}-bucket" \
       --no-confirm-changeset \
       --no-fail-on-empty-changeset \
@@ -76,7 +76,7 @@ if [[ -z $ENVIRONMENT ]]; then
   exit 1
 fi
 
-create_s3_bucket "${STACK_NAME}-bucket"
+create_sam_bucket "${STACK_NAME}-bucket"
 install_packages
 deploy_app
 put_sample_data_dynamodb

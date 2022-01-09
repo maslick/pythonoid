@@ -8,11 +8,14 @@ Globals:
   Function:
     Timeout: 5
 
-
 Parameters:
     Environment:
       Type: String
       Default: dev
+    EndpointType:
+      Type: String
+      Default: "EDGE"
+      AllowedValues: ["EDGE", "REGIONAL", "PRIVATE"]
 
 Resources:
   MyDatabase:
@@ -115,6 +118,8 @@ Resources:
       Name: !Sub ${AWS::StackName}
       StageName: !Sub ${Environment}
       TracingEnabled: true
+      EndpointConfiguration:
+        Type: !Ref EndpointType
       CacheClusterEnabled: true
       CacheClusterSize: "0.5"
       DefinitionBody:

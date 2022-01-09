@@ -4,7 +4,7 @@ AWS API Gateway, Lambda, DynamoDB, S3, SAM showcase
 ## Build and deploy
 ```
 ENV="qa"
-./deploy.sh $ENV 
+./deploy.sh $ENV
 ```
 
 ## Testing
@@ -14,6 +14,27 @@ USER_ID="9752299010000008"
 
 curl -s "$URL/getArticlesByIdDynamo?id=$USER_ID" | jq
 curl -s "$URL/getArticlesByIdS3?id=$USER_ID" | jq
+```
+
+## Private API
+```
+VPC_ENDPOINT="vpce-0b33950a675d1da90-5lxxxxx"
+API_ID="dr1yyyyy"
+REGION="eu-west-1"
+ENV="devs"
+USER_ID="9752299010000008"
+URL1="https://$VPC_ENDPOINT.execute-api.$REGION.vpce.amazonaws.com/$ENV/getArticlesByIdDynamo?id=$USER_ID"
+URL2="https://$VPC_ENDPOINT.execute-api.$REGION.vpce.amazonaws.com/$ENV/getArticlesByIdS3?id=$USER_ID"
+
+curl -s --header "x-apigw-api-id: $API_ID" $URL1 | jq
+curl -s --header "x-apigw-api-id: $API_ID" $URL2 | jq
+
+curl -i --header "x-apigw-api-id: $API_ID" $URL1
+curl -i --header "x-apigw-api-id: $API_ID" $URL2
+
+curl -s --header "Cache-Control: max-age=0" --header "x-apigw-api-id: $API_ID" $URL1 | jq
+curl -s --header "Cache-Control: max-age=0" --header "x-apigw-api-id: $API_ID" $URL2 | jq
+
 ```
 
 ## Load testing

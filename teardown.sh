@@ -3,6 +3,7 @@ set -e
 
 ENVIRONMENT=$1
 STACK_NAME="test-sam-app-${ENVIRONMENT}"
+S3BUCKET="$STACK_NAME-bucket"
 : "${STACK_REGION:="eu-west-1"}"
 
 logger () {
@@ -56,4 +57,4 @@ fi
 
 remove_data_bucket "demo.contact.article.recommendation.${ENVIRONMENT}"
 teardown_sam_stack
-remove_sam_bucket "${STACK_NAME}-bucket"
+remove_sam_bucket $S3BUCKET

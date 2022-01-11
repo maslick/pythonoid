@@ -3,6 +3,7 @@ set -e
 
 ENVIRONMENT=$1
 STACK_NAME="test-sam-app-${ENVIRONMENT}"
+S3BUCKET="$STACK_NAME-bucket"
 
 logger () {
   RED='\033[0;31m'
@@ -28,7 +29,7 @@ function install_packages() {
   logger "################################################################################################"
   logger "Download dependencies and Generate CFN template"
   logger "################################################################################################"
-  sam build
+  sam build #--use-container
   echo ""
 }
 
@@ -38,7 +39,7 @@ function deploy_app() {
   logger "################################################################################################"
   sam deploy --stack-name $STACK_NAME \
       --parameter-overrides "Environment=${ENVIRONMENT} EndpointType=PRIVATE" \
-      --s3-bucket "${STACK_NAME}-bucket" \
+      --s3-bucket $S3BUCKET \
       --no-confirm-changeset \
       --no-fail-on-empty-changeset \
       --capabilities CAPABILITY_IAM
@@ -76,7 +77,7 @@ if [[ -z $ENVIRONMENT ]]; then
   exit 1
 fi
 
-create_sam_bucket "${STACK_NAME}-bucket"
+create_sam_bucket $S3BUCKET
 install_packages
 deploy_app
 put_sample_data_dynamodb

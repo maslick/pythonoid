@@ -53,6 +53,7 @@ Resources:
     Type: AWS::Serverless::LayerVersion
     Properties:
       Description: !Sub Dependencies for ${AWS::StackId}-${Environment}
+      LayerName: !Sub "DepsLayer${Environment}"
       ContentUri: deps
       CompatibleRuntimes:
         - python3.9

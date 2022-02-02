@@ -3,8 +3,10 @@ openapi: "3.0.1"
 
 
 info:
-  title: "pythonoid"
-  description: "AWS API Gateway, Lambda, DynamoDB, S3, SAM showcase"
+  title:
+    Fn::Sub: "pythonoid-${Environment}"
+  description:
+    Fn::Sub: "[${Environment}] API GW, Lambda, DynamoDB, S3, SAM showcase"
   version: "v1.0"
 
 servers:

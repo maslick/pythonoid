@@ -7,7 +7,7 @@ ENV="qa"
 ./deploy.sh $ENV
 ```
 
-## Testing
+## Public API GW
 ```
 URL=$(aws cloudformation describe-stacks --stack-name "test-sam-app-${ENV}" --query "Stacks[0].Outputs[?OutputKey=='RecommendationsApi'].OutputValue" --output text)
 USER_ID="9752299010000008"
@@ -16,15 +16,17 @@ curl -s "$URL/getArticlesByIdDynamo?id=$USER_ID" | jq
 curl -s "$URL/getArticlesByIdS3?id=$USER_ID" | jq
 ```
 
-## Private API
+## Private API GW
 ```
 VPC_ENDPOINT="vpce-0b33950a675d1da90-5lxxxxx"
 API_ID="dr1yyyyy"
 REGION="eu-west-1"
-ENV="devs"
 USER_ID="9752299010000008"
-URL1="https://$VPC_ENDPOINT.execute-api.$REGION.vpce.amazonaws.com/$ENV/getArticlesByIdDynamo?id=$USER_ID"
-URL2="https://$VPC_ENDPOINT.execute-api.$REGION.vpce.amazonaws.com/$ENV/getArticlesByIdS3?id=$USER_ID"
+STAGE="qa"
+
+API_ID="dr1yyyyy"
+URL1="https://$VPC_ENDPOINT.execute-api.$REGION.vpce.amazonaws.com/$STAGE/getArticlesByIdDynamo?id=$USER_ID"
+URL2="https://$VPC_ENDPOINT.execute-api.$REGION.vpce.amazonaws.com/$STAGE/getArticlesByIdS3?id=$USER_ID"
 
 curl -s --header "x-apigw-api-id: $API_ID" $URL1 | jq
 curl -s --header "x-apigw-api-id: $API_ID" $URL2 | jq
